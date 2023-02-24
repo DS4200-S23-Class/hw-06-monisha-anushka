@@ -1,0 +1,41 @@
+/* set body text to Arial*/
+body {
+    font-family: Arial;
+}
+
+/* class to center to text */
+.centered {
+    text-align: center;
+}
+
+/* set flexbox row */
+.row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+/* set flexbox columns to the left with 30% */
+.left-column {
+    display: flex;
+    flex-direction:column;
+    flex-basis: 100%;
+    flex: 33;
+}
+
+/* set flexbox column to the right at 40% */
+.middle-column {
+    display: flex;
+    flex-direction:column;
+    flex-basis: 100%;
+    flex: 33;
+}
+
+/* set flexbox column to the right at 40% */
+.right-column {
+    display: flex;
+    flex-direction:column;
+    flex-basis: 100%;
+    flex: 33;
+}
