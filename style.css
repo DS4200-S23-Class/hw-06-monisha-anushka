@@ -39,3 +39,7 @@ body {
     flex-basis: 100%;
     flex: 33;
 }
+
+.point {
+    fill: seagreen;
+}
