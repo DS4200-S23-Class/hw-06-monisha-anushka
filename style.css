@@ -40,15 +40,20 @@ body {
     flex: 33;
 }
 
+
+.point{
+    opacity: .5;
+}
+
 .selectedPoint{
-    opacity: .8;
+    opacity: 1;
     stroke: orange;
-    stroke-width: 3px;
+    stroke-width: 2px;
 }
 
 
 .selectedBar{
-    opacity: .8;
+    opacity: 1;
     stroke: orange;
-    stroke-width: 3px;
+    stroke-width: 5px;
 }

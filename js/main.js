@@ -37,28 +37,32 @@ d3.csv("data/iris.csv").then((data) => {
 
 	// create scales to map x and y values to pixels 
 	const X_SCALE = d3.scaleLinear() 
-	                    .domain([0, (MAX_X1)]) 
+	                    .domain([0, (MAX_X1 + 2)]) 
 	                    .range([0, VIS_WIDTH]); 
 	const Y_SCALE = d3.scaleLinear() 
-	                    .domain([0, (MAX_Y1)]) 
+	                    .domain([0, (MAX_Y1 + 2)]) 
 	                    .range([VIS_HEIGHT, 0]); 
 
-        const color = d3.scaleOrdinal()
+    const color = d3.scaleOrdinal()
                         .domain(["setosa", "versicolor", "virginica" ])
                         .range([ "blue", "green", "red"])
 
 	// append svg circle points based on data
-        FRAME1.selectAll("point")  
+        var point1 = FRAME1.append("g")
+        .   selectAll("point")  
             .data(data) 
             .enter()       
             .append("circle")  
             .attr("cx", (d) => { return (X_SCALE(d.Sepal_Length) + MARGINS.left); }) 
             .attr("cy", (d) => { return (Y_SCALE(d.Petal_Length) + MARGINS.bottom); })
-            .attr("r", 3)
+            .attr("r", 5)
             .style('opacity', 0.5)
             .style("fill", (d) => {return color(d.Species)})
             .attr("class", "point");
     
+
+    
+
         // add x axis
 	FRAME1.append("g") 
             .attr("transform", "translate(" + MARGINS.left + 
@@ -79,23 +83,55 @@ d3.csv("data/iris.csv").then((data) => {
          
         // create scales to map x and y values to pixels 
         const X_SCALE2 = d3.scaleLinear() 
-                                 .domain([0, (MAX_X2)]) 
+                                 .domain([0, (MAX_X2 + 2)]) 
                                  .range([0, VIS_WIDTH]); 
         const Y_SCALE2 = d3.scaleLinear() 
-                                 .domain([0, (MAX_Y2)]) 
+                                 .domain([0, (MAX_Y2 + 2)]) 
                                  .range([VIS_HEIGHT, 0]);
+
+        
     
         //adding points to frame2
-        FRAME2.selectAll("point")  
+        var point2 = FRAME2.append("g")
+            .selectAll("circle")  
             .data(data) 
             .enter()       
             .append("circle")  
             .attr("cx", (d) => { return (X_SCALE2(d.Sepal_Width) + MARGINS.left); }) 
             .attr("cy", (d) => { return (Y_SCALE2(d.Petal_Width) + MARGINS.bottom); })
-            .attr("r", 3)
+            .attr("r", 5)
             .style('opacity', 0.5)
-            .style("fill", (d) => {return color(d.Species)})
+            .style("fill", (d) => {return color(d.Species); })
             .attr("class", "point");
+        
+     
+    const BRUSH = d3.brush()
+                        .extent([ [0,0], [FRAME_WIDTH,FRAME_HEIGHT] ])
+                        .on("start brush", brushed);
+       
+
+    function brushed(event) {
+
+        
+        const selection = event.selection;
+        point2.classed("selectedPoint", (d) => { return isBrushed(selection, X_SCALE2(d.Sepal_Width) + MARGINS.left, Y_SCALE2(d.Petal_Width) + MARGINS.bottom ) })
+        point1.classed("selectedPoint", (d) => { return isBrushed(selection, X_SCALE2(d.Sepal_Width) + MARGINS.left, Y_SCALE2(d.Petal_Width) + MARGINS.bottom ) })
+        //bars.classed("selectedBar", (d) => { return color(d.Species) == color(d[
+       
+       }; 
+    
+        function isBrushed(brush_coords, cx, cy) {
+       var x0 = brush_coords[0][0],
+           x1 = brush_coords[1][0],
+           y0 = brush_coords[0][1],
+           y1 = brush_coords[1][1];
+      return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1;    // This return TRUE or FALSE depending on if the points is in the selected area
+  };
+
+       
+    FRAME2.call(BRUSH);
+
+     
     
         // add x axis
 	FRAME2.append("g") 
@@ -111,18 +147,13 @@ d3.csv("data/iris.csv").then((data) => {
             .call(d3.axisLeft(Y_SCALE)) 
             .attr("font-size", '10px');
 
-
-
-
-    
-
     
         // bar chart
         // create y axis scale based on amount column
 
 	const MAX_AMT = 50
 
-    var speciesArray = [['setosa', 50], ['versicolor', 50], ['virginica', 50]];
+    var speciesArray = [{species: 'setosa', count: 50}, {species: 'versicolor', count: 50}, {species: 'virginica', count: 50}];
 
 	         
 	const AMT_SCALE = d3.scaleLinear() 
@@ -137,16 +168,17 @@ d3.csv("data/iris.csv").then((data) => {
 
 
         // plot bar based on data with rectangle svgs 
-		var FRAME3.selectAll("bar")  
+		var bars = FRAME3.append("g")
+            .selectAll("bar")  
 	        .data(speciesArray) 
 	        .enter()       
 	        .append("rect")  
-	          .attr("y", (d) => { return AMT_SCALE(d[1]) + MARGINS.bottom; }) 
-	          .attr("x", (d) => { return CATEGORY_SCALE(d[0]) + MARGINS.left;}) 
-	          .attr("height", (d) => { return VIS_HEIGHT - AMT_SCALE(d[1]); })
+	          .attr("y", (d) => { return AMT_SCALE(d.count) + MARGINS.bottom; }) 
+	          .attr("x", (d) => { return CATEGORY_SCALE(d.species) + MARGINS.left;}) 
+	          .attr("height", (d) => { return VIS_HEIGHT - AMT_SCALE(d.count); })
 	          .attr("width", CATEGORY_SCALE.bandwidth())
               .style('opacity', 0.5)
-              .style("fill", (d) => {return color(d[0])})
+              .style("fill", (d) => {return color(d.species)})
 	          .attr("class", "bar");
 
 
@@ -164,5 +196,7 @@ d3.csv("data/iris.csv").then((data) => {
 	            "," + (MARGINS.top) + ")") 
 	      .call(d3.axisLeft(AMT_SCALE).ticks(10)) 
 	        .attr("font-size", '20px');
+
+
         
 });
