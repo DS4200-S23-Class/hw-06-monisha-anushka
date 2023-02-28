@@ -111,9 +111,19 @@ d3.csv("data/iris.csv").then((data) => {
             .call(d3.axisLeft(Y_SCALE)) 
             .attr("font-size", '10px');
 
+
+
+
+    
+
+    
         // bar chart
         // create y axis scale based on amount column
-	const MAX_AMT = 50;
+
+	const MAX_AMT = 50
+
+    var speciesArray = [['setosa', 50], ['versicolor', 50], ['virginica', 50]];
+
 	         
 	const AMT_SCALE = d3.scaleLinear() 
 	                    .domain([MAX_AMT + 10, 0]) 
@@ -127,14 +137,16 @@ d3.csv("data/iris.csv").then((data) => {
 
 
         // plot bar based on data with rectangle svgs 
-		FRAME3.selectAll("bar")  
-	        .data(data) 
+		var FRAME3.selectAll("bar")  
+	        .data(speciesArray) 
 	        .enter()       
 	        .append("rect")  
-	          .attr("y", 50) 
-	          .attr("x", (d) => { return CATEGORY_SCALE(d.Species) + MARGINS.left;}) 
-	          .attr("height", (d) => { return VIS_HEIGHT - AMT_SCALE(d.amount); })
+	          .attr("y", (d) => { return AMT_SCALE(d[1]) + MARGINS.bottom; }) 
+	          .attr("x", (d) => { return CATEGORY_SCALE(d[0]) + MARGINS.left;}) 
+	          .attr("height", (d) => { return VIS_HEIGHT - AMT_SCALE(d[1]); })
 	          .attr("width", CATEGORY_SCALE.bandwidth())
+              .style('opacity', 0.5)
+              .style("fill", (d) => {return color(d[0])})
 	          .attr("class", "bar");
 
 
