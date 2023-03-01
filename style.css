@@ -40,20 +40,10 @@ body {
     flex: 33;
 }
 
-
-.point{
-    opacity: .5;
-}
-
+/* create class for added border and opacity with brushing */
 .selectedPoint{
-    opacity: 1;
-    stroke: orange;
-    stroke-width: 2px;
-}
-
-
-.selectedBar{
     opacity: 1;
     stroke: orange;
     stroke-width: 5px;
 }
+
